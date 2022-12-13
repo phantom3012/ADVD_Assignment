@@ -1,0 +1,170 @@
+\documentclass[titlepage]{article}
+
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{tcolorbox}
+\usepackage{makecell}
+\usepackage{cancel}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{enumitem}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue, 
+    filecolor=magenta,
+    urlcolor=blue
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\rfoot{\thepage \hspace{1pt} of \pageref{LastPage}}
+
+\begin{document}
+
+
+\begin{titlepage}
+    \begin{center}
+        \Huge
+        \vspace*{3cm}
+        \textbf{  ADVD \\  \quad Assignment 2} \\
+        \quad EEE F313\\[3ex]
+        \huge
+        \quad Problem set 14 \\[2ex]
+        \quad\includegraphics[scale=0.75]{BITS_Pilani-Logo.png}
+        \vfill
+        \huge
+        \quad Sai Kartik (2020A3PS0435P)\\\quad Rajeev Rajagopal (2020A3PS1237P) \\ \quad Manpreet Singh (2020A3PS0419P)
+    \end{center}
+\end{titlepage}
+
+\newgeometry{left=2cm,bottom=2cm,right=2cm,top=2cm}
+
+\pagenumbering{roman}
+
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\section {Problem statement}
+\begin{tcolorbox}
+    Design a two stage CMOS OPAMP as shown in the figure
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{questionpng.png}
+    \end{center}
+    \begin{enumerate}[label=(\alph*)]
+        \item Analysis of all equations of your design, with a systematic derivation of all transistors W/L ratios and spectre simulation of circuit for the following specifications:
+              \begin{enumerate}[label=(\roman*)]
+                  \item Open loop gain (DC gain) $\geq$ 110dB
+                  \item Phase margin $\approx 60^{\circ}$
+                  \item Power dissipation $\leq$ 1mW
+              \end{enumerate}
+        \item Show a biasing circuitry to bias all the voltages in your design (except the input)
+        \item Calculate and plot the following parameters for your OPAMP: DC gain, Bode plot for AC gain and phase, ICMR plot, slew rate, Differential Output voltage swing (dc+transient), power consumption, and input and output offset voltage.
+    \end{enumerate}
+\end{tcolorbox}
+\newpage
+
+\section{Design}
+\subsection{Circuit diagram}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale = 0.505]{circ.jpg}
+    \caption{Circuit diagram}
+    \label{fig:circuit}
+\end{figure}
+\subsection{W/L calculations}
+\begin{itemize}
+    \item Current will be same in all the branches of the circuit. Approximate value of $|\text{V}_{\text{DS}}|$ was calculated accordingly.
+    \item PMOS overdrive was set at 0.36V and NMOS overdrive at 0.3V because of the lesser mobility of PMOS, which hence needs a higher overdrive voltage.
+    \item To obtain W/L of all the MOSFETs:
+          \begin{itemize}
+              \item  The MOSFETs were taken to a separate SPICE file.
+              \item  Since the L value is constant, the value for W was found by parametrically sweeping accordingly to match requirements
+          \end{itemize}
+\end{itemize}
+\subsubsection{W/L table}
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        MOSFET                  & W            & W/L \\
+        \hline
+        M1 \& M2                & 5.6  $\mu$   & 16  \\
+        M3 \& M4                & 5.6  $\mu$   & 99  \\
+        M5                      & 65.8 $\mu$   & 188 \\
+        M6 \& M7  \& M10 \& M12 & 2.8  $\mu$   & 8   \\
+        M8 \&M9                 & 56  $\mu$    & 160 \\
+        M11                     & 16.55  $\mu$ & 47  \\
+        \hline
+    \end{tabular}
+    \caption{Table for W/L values}
+\end{table}
+\newpage
+\section{Plots and results}
+
+\subsection{Bode plot for AC gain and phase}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale = 0.3]{gain.png}
+    \caption{AC gain at }
+    \label{fig:acgain}
+\end{figure}
+\noindent UGB from the given circuit is 218.776 MHz. \\With the current circuitry and number of stages the maximum gain we are able to achieve is 66.48dB at 27 $^{\circ}$C. The gain can be increased by adding more stages at the expense of power consumption.
+\subsection{ICMR plot}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale = 1.3]{icmr.png}
+    \caption{ICMR plot}
+    \label{fig:icmr}
+\end{figure}
+\newpage
+\subsection{Slew rate}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale = 0.5]{slew.jpg}
+    \caption{Slew rate}
+    \label{fig:sr}
+\end{figure}
+\newpage
+\subsection{Differential output voltage swing}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale = 0.5]{dov.jpg}
+    \caption{Differential output voltage swing}
+    \label{fig:diff}
+\end{figure}
+\subsection{Power consumption}
+Power consumed by the circuit is given by the product: Total current drawn $\times$ $\text{V}_{\text{dd}}$ \\
+From the circuit simulated by LTSpice, we have the total current drawn as $\text{I}_{\text{tot}} = 329.4 \mu \text{A}$ and $\text{V}_{dd} = 2.5V$ . \\
+Hence  the total power consumption: $\text{I}_{\text{tot}}\times\text{V}_{\text{dd}} = 329.24\mu \text{A} \times 2.5 \text{V} = 0.8321 \text{mW} \leq 1 \text{mW}$
+\subsection{Input and output offset voltage}
+The input is an AC voltage of 30 $\mu$ sinusoid with a frequency of 1kHz. The DC offset voltage given is 1.858V.
+\subsubsection{Input offset voltage}
+The input offset voltage is negligible due to the circuit being systematic at the input nodes
+\newpage
+\subsubsection{Output offset voltage}
+Output offset voltage($\text{V}_{\text{oo}}$) is defined as follows: Output voltage of the op-amp when both inputs are 0. $\text{V}_{\text{oo}}$ is due to dissimilarities in the transistors and due to mismatch in resistor values in the internal circuitry in the op-amp.
+For this particular calculation, input was set as 0 and transient analysis was performed, which gives us the graph below for small time periods. For larger time periods, a steep fall was observed \\[2ex]
+The output offset voltage is determined to be 38.089 mV.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale = 0.5]{oov.jpg}
+    \caption{Output offset voltage}
+    \label{fig:offset}
+\end{figure}
+\section{Design Challenges}
+\begin{enumerate}
+    \item It was very tedious to match the W/L values from both hand calculations and SPICE simulations. Trial and error was used to eventually reach an optimal value of W/L for each transistor.
+    \item Obtaining parameters for a 2-stage op-amp was very tricky because of various factors like intermediate poles and separate biasing voltages of all stages
+    \item No option of a pole and zero plot is available in LTSpice. Individual bode plots had to be used.
+\end{enumerate}
+
+\end{document}
